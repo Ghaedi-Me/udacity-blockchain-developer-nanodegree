@@ -25,9 +25,8 @@ class LevelSandbox {
     // Add data to levelDB with key and value (Promise)
     addLevelDBData(key, value) {
         return new Promise((resolve, reject) => {
-            let dataArray = []
             this.db.createReadStream().on('data', (data) => {
-                dataArray.push(data);
+
             }).on('error', (err) => {
                 reject(err);
             }).on('close', () => {
@@ -36,7 +35,7 @@ class LevelSandbox {
                         reject(err);
                     }
                 })
-                resolve(dataArray);
+                resolve(JSON.parse(value));
             });
         })
     }

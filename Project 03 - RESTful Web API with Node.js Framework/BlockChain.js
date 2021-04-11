@@ -51,8 +51,8 @@ class Blockchain {
                         // Block hash with SHA256 using block and converting to a string
                         block.hash = SHA256(JSON.stringify(block)).toString();
                         // Adding block object to chain
-                        this.bd.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockChain) => {
-                            resolve(blockChain);
+                        this.bd.addLevelDBData(block.height, JSON.stringify(block).toString()).then((addedBlock) => {
+                            resolve(addedBlock);
                         }).catch((err) => {
                             reject(err);
                         });
@@ -64,8 +64,8 @@ class Blockchain {
                     // Block hash with SHA256 using block and converting to a string
                     block.hash = SHA256(JSON.stringify(block)).toString();
                     // Adding block object to chain
-                    this.bd.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockChain) => {
-                        resolve(blockChain);
+                    this.bd.addLevelDBData(block.height, JSON.stringify(block).toString()).then((addedBlock) => {
+                        resolve(addedBlock);
                     }).catch((err) => {
                         reject(err);
                     });
