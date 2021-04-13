@@ -1,5 +1,6 @@
 const BlockChain = require('./BlockChain.js');
 const Block = require('./Block.js');
+const Mempool = require('./Mempool.js');
 
 /**
  * Controller Definition to encapsulate routes to work with blocks
@@ -12,8 +13,10 @@ class BlockController {
     constructor(app) {
         this.app = app;
         this.blockChain = new BlockChain.Blockchain();
+        this.mempool = new Mempool.Mempool();
         this.getBlockByIndex();
         this.postNewBlock();
+        this.requestValidation();
     }
 
     /**
@@ -46,6 +49,22 @@ class BlockController {
                 res.end()
             }
         });
+    }
+
+    requestValidation() {
+        this.app.post("/requestValidation", (req, res, next) => {
+            if(req.body.address) {
+                this.mempool.addRequestValidation(req.body.address).then((requestObject) => {
+                    res.send(requestObject);
+                }).catch((err) => {
+                    next(err);
+                })
+            }
+            else {
+                res.status(400).send("Bad request: Request body has no address");
+                res.end()
+            }
+        })
     }
 }
 
