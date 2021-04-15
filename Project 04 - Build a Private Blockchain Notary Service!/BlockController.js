@@ -17,6 +17,7 @@ class BlockController {
         this.getBlockByIndex();
         this.postNewBlock();
         this.requestValidation();
+        this.validate();
     }
 
     /**
@@ -45,8 +46,7 @@ class BlockController {
                 });
             }
             else {
-                res.status(400).send("Bad request: Empty body");
-                res.end()
+                res.send({messgae: "Request body has no body key"});
             }
         });
     }
@@ -61,8 +61,22 @@ class BlockController {
                 })
             }
             else {
-                res.status(400).send("Bad request: Request body has no address");
-                res.end()
+                res.send({message: "Request body has no address"});
+            }
+        })
+    }
+
+    validate() {
+        this.app.post("/message-signature/validate", (req, res, next) => {
+            if(req.body.address && req.body.signature) {
+                this.mempool.validateRequestByWallet(req.body.address, req.body.signature).then((validRequestObj) => {
+                    res.send(validRequestObj);
+                }).catch((err) => {
+                    next(err);
+                })
+            }
+            else {
+                res.send({message: "Request body has no address or signature"});
             }
         })
     }
