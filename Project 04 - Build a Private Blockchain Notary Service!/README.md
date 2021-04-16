@@ -20,7 +20,7 @@ Create a REST API that allows users to interact with the application.
 - The API will allow be able to submit the Star data.
 - The API will allow lookup of Stars by hash, wallet address, and height.
 
-##### Explanation of Star Coordinates
+#### Explanation of Star Coordinates
 Here is an example of how star coordinates are represented, to store it on the private blockchain:
 
 ```
@@ -48,7 +48,7 @@ MAG = Magnitude
 - bitcoinjs-message - Message verify
 - bitcoinjs-message node.js library requires bitcoinjs-lib to sign and verify Bitcoin message.
 
-### Configuring your project
+#### Configuring your project
 
 - Install requirements
 
