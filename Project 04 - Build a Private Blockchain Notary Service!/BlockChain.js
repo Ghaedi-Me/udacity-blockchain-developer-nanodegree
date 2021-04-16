@@ -46,7 +46,7 @@ class Blockchain {
                 block.time = new Date().getTime().toString().slice(0,-3);
                 // previous block hash
                 if(block.height>0){
-                    this.getBlock(block.height-1).then((previousBlock) => {
+                    this.getBlockByHeight(block.height-1).then((previousBlock) => {
                         block.previousBlockHash = previousBlock.hash;
                         // Block hash with SHA256 using block and converting to a string
                         block.hash = SHA256(JSON.stringify(block)).toString();
@@ -80,7 +80,7 @@ class Blockchain {
     validateBlock(height) {
         return new Promise((resolve, reject) => {
             // get block object
-            this.getBlock(height).then((res) => {
+            this.getBlockByHeight(height).then((res) => {
                 let block = res;
                 // get block hash
                 let blockHash = block.hash;
@@ -111,9 +111,9 @@ class Blockchain {
                     this.validateBlock(i).then((res) => {
                         if(!res) errorLog.push(i);
                         // compare blocks hash link
-                        this.getBlock(i).then((block) => {
+                        this.getBlockByHeight(i).then((block) => {
                             let blockHash = block.hash;
-                            this.getBlock(i+1).then((nextBlock) => {
+                            this.getBlockByHeight(i+1).then((nextBlock) => {
                                 let previousHash = nextBlock.previousBlockHash;
                                 if (blockHash!==previousHash) {
                                     errorLog.push(i);
@@ -168,16 +168,6 @@ class Blockchain {
                 reject(err);
             })
         })
-    }
-
-    // Utility Method to Tamper a Block for Test Validation
-    // This method is for testing purpose
-    _modifyBlock(height, block) {
-        return new Promise( (resolve, reject) => {
-            this.bd.addLevelDBData(height, JSON.stringify(block).toString()).then((blockModified) => {
-                resolve(blockModified);
-            }).catch((err) => {reject(err)});
-        });
     }
 }
 
