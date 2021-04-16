@@ -11,18 +11,6 @@ class LevelSandbox {
         this.db = level(chainDB);
     }
 
-    // Get data from levelDB with key (Promise)
-    getLevelDBData(key){
-        return new Promise((resolve, reject) => {
-            this.db.get(key, (err, value) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(value);
-            })
-        });
-    }
-
     // Add data to levelDB with key and value (Promise)
     addLevelDBData(key, value) {
         return new Promise((resolve, reject) => {
@@ -85,6 +73,18 @@ class LevelSandbox {
                 resolve(blocks);
             });
         })
+    }
+
+    // Get data from levelDB with key (Promise)
+    getLevelDBData(key){
+        return new Promise((resolve, reject) => {
+            this.db.get(key, (err, value) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(value);
+            })
+        });
     }
 }
 

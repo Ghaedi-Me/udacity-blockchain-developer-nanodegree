@@ -76,18 +76,6 @@ class Blockchain {
         })
     }
 
-    // Get Block By Height
-    getBlock(height) {
-        // return object as a single string
-        return new Promise((resolve, reject) => {
-            this.bd.getLevelDBData(height).then((block) => {
-                resolve(JSON.parse(block));
-            }).catch((err) => {
-                reject(err);
-            })
-        })
-    }
-
     // Validate if Block is being tampered by Block Height
     validateBlock(height) {
         return new Promise((resolve, reject) => {
@@ -164,6 +152,18 @@ class Blockchain {
             this.bd.getBlockByWalletAddress(address).then((blocks) => {
                 let blocksObj = blocks.map((block) => {return JSON.parse(block)})
                 resolve(blocksObj);
+            }).catch((err) => {
+                reject(err);
+            })
+        })
+    }
+
+    // Get Block By Height
+    getBlockByHeight(height) {
+        // return object as a single string
+        return new Promise((resolve, reject) => {
+            this.bd.getLevelDBData(height).then((block) => {
+                resolve(JSON.parse(block));
             }).catch((err) => {
                 reject(err);
             })

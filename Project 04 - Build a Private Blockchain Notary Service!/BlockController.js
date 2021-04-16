@@ -15,27 +15,13 @@ class BlockController {
         this.app = app;
         this.blockChain = new BlockChain.Blockchain();
         this.mempool = new Mempool.Mempool();
-        this.getBlockByIndex();
         this.requestValidation();
         this.validate();
         this.block();
         this.getBlockByHash();
         this.getBlockByWalletAddress();
+        this.getBlockByHeight();
     }
-
-    /**
-     * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
-     */
-    getBlockByIndex() {
-        this.app.get("/block/:index", (req, res, next) => {
-            this.blockChain.getBlock(req.params.index).then((block) => {
-                res.send(block);
-            }).catch((err) => {
-                next(err);
-            })
-        });
-    }
-
     /**
      * Implement a POST Endpoint to submit a validation request, url: "/requestValidation"
      */
@@ -140,6 +126,25 @@ class BlockController {
                 next(err);
             })
         })
+    }
+
+    /**
+     * Implement a GET Endpoint to retrieve a block by height, url: "/block/:height"
+     */
+     getBlockByHeight() {
+        this.app.get("/block/:height", (req, res, next) => {
+            this.blockChain.getBlockByHeight(req.params.height).then((block) => {
+                if(block.height !== 0) {
+                    block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+                    res.send(block);
+                }
+                else { // Genesis Block
+                    res.send(block);
+                }  
+            }).catch((err) => {
+                next(err);
+            })
+        });
     }
 }
 
