@@ -158,6 +158,18 @@ class Blockchain {
         })
     }
 
+    // Get Block By Wallet Address
+    getBlockByWalletAddress(address) {
+        return new Promise((resolve, reject) => {
+            this.bd.getBlockByWalletAddress(address).then((blocks) => {
+                let blocksObj = blocks.map((block) => {return JSON.parse(block)})
+                resolve(blocksObj);
+            }).catch((err) => {
+                reject(err);
+            })
+        })
+    }
+
     // Utility Method to Tamper a Block for Test Validation
     // This method is for testing purpose
     _modifyBlock(height, block) {

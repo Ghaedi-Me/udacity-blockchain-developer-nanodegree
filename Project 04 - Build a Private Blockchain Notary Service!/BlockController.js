@@ -20,6 +20,7 @@ class BlockController {
         this.validate();
         this.block();
         this.getBlockByHash();
+        this.getBlockByWalletAddress();
     }
 
     /**
@@ -115,13 +116,26 @@ class BlockController {
         this.app.get("/stars/hash::hash", (req, res, next) => {
             this.blockChain.getBlockByHash(req.params.hash).then((block) => {
                 if(block){
-                    console.log(hex2ascii(block.body.star.story))
                     block.body.star.storyDecoded = hex2ascii(block.body.star.story);
                     res.send(block);
                 }
                 else {
                     res.send({message: "Block not found"});
                 }
+            }).catch((err) => {
+                next(err);
+            })
+        })
+    }
+
+    /**
+     * Implement a GET Endpoint to retrieve a block by wallet address, url: "/stars/address::address"
+     */
+    getBlockByWalletAddress() {
+        this.app.get("/stars/address::address", (req, res, next) => {
+            this.blockChain.getBlockByWalletAddress(req.params.address).then((blocks) => {
+                blocks.map((block) => {block.body.star.storyDecoded = hex2ascii(block.body.star.story)});
+                res.send(blocks);
             }).catch((err) => {
                 next(err);
             })

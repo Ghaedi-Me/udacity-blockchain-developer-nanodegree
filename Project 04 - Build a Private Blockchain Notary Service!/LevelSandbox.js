@@ -70,6 +70,22 @@ class LevelSandbox {
             });
         })
     }
+
+    // Get Block By Wallet Address
+    getBlockByWalletAddress(address) {
+        let blocks = [];
+        return new Promise((resolve, reject) => {
+            this.db.createReadStream().on('data', (data) => {
+                if(JSON.parse(data.value).body.address === address){
+                    blocks.push(data.value);
+                }
+            }).on('error', function (err) {
+                reject(err)
+            }).on('close', function () {
+                resolve(blocks);
+            });
+        })
+    }
 }
 
 module.exports.LevelSandbox = LevelSandbox;
