@@ -40,7 +40,7 @@ MAG = Magnitude
 ```
 
 
-#### Add Dependencies
+#### Dependencies
 - crypto-js - JavaScript library of crypto standards
 - express-js - Framework for RESTful API
 - hex2ascii - Convert hex to ascii in JavaScript
@@ -48,23 +48,21 @@ MAG = Magnitude
 - bitcoinjs-message - Message verify
 - bitcoinjs-message node.js library requires bitcoinjs-lib to sign and verify Bitcoin message.
 
+### Configuring your project
+
+- Install requirements
+
 ```
-npm install crypto-js express.js hex2ascii level bitcoinjs-message bitcoinjs-lib --save
+npm install 
 ```
 
-#### Configuring Project Repository
-- Go into project order
-- Use NPM to initialize your project and create package.json to store project dependencies.
-```
-npm init
-```
-#### Start local server
-- Run command ```node app.js``` in the root directory
+- Run server
 
-Output on console:
-Server Listening for port: 8000
+```
+node app.js
+```
 
-Start http://localhost:8000
+This will run the server on `http://localhost:8000` .
 
 
 
