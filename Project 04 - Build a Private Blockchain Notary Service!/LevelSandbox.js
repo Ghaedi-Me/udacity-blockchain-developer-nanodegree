@@ -2,6 +2,7 @@
 |  Learn more: level: https://github.com/Level/level |
 /===================================================*/
 
+const { json } = require('body-parser');
 const level = require('level');
 const chainDB = './chaindata';
 
@@ -52,7 +53,23 @@ class LevelSandbox {
                 resolve(i);
             });
         });
-    }       
+    }
+    
+    // Get Block By Hash
+    getBlockByHash(hash) {
+        let block = null;
+        return new Promise((resolve, reject) => {
+            this.db.createReadStream().on('data', (data) => {
+                if(JSON.parse(data.value).hash === hash){
+                    block = data.value;
+                }
+            }).on('error', function (err) {
+                reject(err)
+            }).on('close', function () {
+                resolve(block);
+            });
+        })
+    }
 }
 
 module.exports.LevelSandbox = LevelSandbox;

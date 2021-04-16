@@ -1,6 +1,7 @@
 const BlockChain = require('./BlockChain.js');
 const Block = require('./Block.js');
 const Mempool = require('./Mempool.js');
+const hex2ascii = require('hex2ascii')
 
 /**
  * Controller Definition to encapsulate routes to work with blocks
@@ -15,9 +16,10 @@ class BlockController {
         this.blockChain = new BlockChain.Blockchain();
         this.mempool = new Mempool.Mempool();
         this.getBlockByIndex();
-        this.postNewBlock();
         this.requestValidation();
         this.validate();
+        this.block();
+        this.getBlockByHash();
     }
 
     /**
@@ -34,23 +36,8 @@ class BlockController {
     }
 
     /**
-     * Implement a POST Endpoint to add a new Block, url: "/api/block"
+     * Implement a POST Endpoint to submit a validation request, url: "/requestValidation"
      */
-    postNewBlock() {
-        this.app.post("/block", (req, res, next) => {
-            if(req.body.body) {
-                this.blockChain.addBlock(new Block.Block(req.body.body)).then((addedBlock) => {
-                    res.send(addedBlock)
-                }).catch((err) => {
-                    next(err);
-                });
-            }
-            else {
-                res.send({messgae: "Request body has no body key"});
-            }
-        });
-    }
-
     requestValidation() {
         this.app.post("/requestValidation", (req, res, next) => {
             if(req.body.address) {
@@ -66,6 +53,9 @@ class BlockController {
         })
     }
 
+    /**
+     * Implement a POST Endpoint to send a validation request, url: "/message-signature/validate"
+     */
     validate() {
         this.app.post("/message-signature/validate", (req, res, next) => {
             if(req.body.address && req.body.signature) {
@@ -78,6 +68,63 @@ class BlockController {
             else {
                 res.send({message: "Request body has no address or signature"});
             }
+        })
+    }
+
+    /**
+     * Implement a POST Endpoint to send star data to be stored, url: "/block"
+     */
+    block() {
+        this.app.post("/block", (req, res, next) => {
+            if(req.body.address && req.body.star) {
+                if(req.body.star.dec && req.body.star.ra && req.body.star.story) {
+                    if(this.mempool.verifyAddressRequest(req.body.address)) {
+                        // Star story supports ASCII text
+                        req.body.star.story = req.body.star.story.replace(/[^\x00-\x7F]/g, "");
+                        // Star story limited to 250 words (500 bytes)
+                        // Each character of a string is 16-bit in js
+                        req.body.star.story = req.body.star.story.substring(0,250);
+                        // Star story is hex encoded
+                        req.body.star.story = new Buffer(req.body.star.story).toString('hex');
+                        this.blockChain.addBlock(new Block.Block(req.body)).then((blockObj) => {
+                            blockObj.body.star.storyDecoded = hex2ascii(blockObj.body.star.story);
+                            this.mempool.removeAddressRequest(req.body.address);
+                            res.send(blockObj);
+                        }).catch((err) => {
+                            next(err);
+                        })
+                    }
+                    else {
+                        res.send({message: "No verified request found"});
+                    }
+                }
+                else {
+                    res.send({message: "Star object has no dec, ra, or story"});
+                }
+            }
+            else {
+                res.send({message: "Request body has no address or star"});
+            }
+        })
+    }
+
+    /**
+     * Implement a GET Endpoint to retrieve a block by hash, url: "/stars/hash::hash"
+     */
+    getBlockByHash() {
+        this.app.get("/stars/hash::hash", (req, res, next) => {
+            this.blockChain.getBlockByHash(req.params.hash).then((block) => {
+                if(block){
+                    console.log(hex2ascii(block.body.star.story))
+                    block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+                    res.send(block);
+                }
+                else {
+                    res.send({message: "Block not found"});
+                }
+            }).catch((err) => {
+                next(err);
+            })
         })
     }
 }

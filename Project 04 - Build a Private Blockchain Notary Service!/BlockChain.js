@@ -147,6 +147,17 @@ class Blockchain {
         })
     }
 
+    // Get Block By Hash
+    getBlockByHash(hash) {
+        return new Promise((resolve, reject) => {
+            this.bd.getBlockByHash(hash).then((block) => {
+                resolve(JSON.parse(block));
+            }).catch((err) => {
+                reject(err);
+            })
+        })
+    }
+
     // Utility Method to Tamper a Block for Test Validation
     // This method is for testing purpose
     _modifyBlock(height, block) {

@@ -93,6 +93,17 @@ class Mempool {
     removeRequestByWallet(address) {
         delete this.mempoolValid[address];
     }
+
+    // Verify if there is a valid request in mempoolValid
+    verifyAddressRequest(address) {
+        return address in this.mempoolValid;
+    }
+
+    // Remove request and clear SetTimeout
+    removeAddressRequest(address) {
+        clearTimeout(this.timeoutMempoolValid[address]);
+        this.removeRequestByWallet(address);
+    }
 }
 
 module.exports.Mempool = Mempool;
